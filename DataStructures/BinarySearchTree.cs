@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Sample
 {
 	public class BinarySearchTree<T> where T : IComparable
 	{
 		private Node<T> root;
+		private int size;
 
 		public BinarySearchTree ()
 		{
@@ -14,6 +16,7 @@ namespace Sample
 		{
 			if (root == null) {
 				root = new Node<T> (data);
+				size++;
 			} else {
 				addData (data, root);
 			}
@@ -28,6 +31,7 @@ namespace Sample
 					addData (data, leftChild);
 				} else {
 					node.addLeftChild (data);
+					size++;
 				}
 			} else if (comparison > 0) {
 				Node<T> rightChild = node.getRightChild ();
@@ -35,6 +39,7 @@ namespace Sample
 					addData (data, rightChild);
 				} else {
 					node.addRightChild (data);
+					size++;
 				}
 			}
 		}
@@ -42,7 +47,10 @@ namespace Sample
 		public void remove(T data)
 		{
 			Node<T> node = find (data);
-			removeNode (node);
+			if (node != null) {
+				removeNode (node);
+				size--;
+			}
 		}
 
 		private void removeNode(Node<T> node)
@@ -107,6 +115,29 @@ namespace Sample
 			} else {
 				return findData (data, node.getRightChild ());
 			}
+		}
+
+		public List<T> toList()
+		{
+			List<T> list = new List<T>();
+			traverse (root, list);
+			return list;
+		}
+
+		private void traverse(Node<T> currentNode, List<T> list)
+		{
+			if (currentNode == null) {
+				return;
+			}
+
+			traverse (currentNode.getLeftChild (), list);
+			list.Add (currentNode.getData());
+			traverse (currentNode.getRightChild (), list);
+		}
+
+		public int getSize()
+		{
+			return size;
 		}
 
 
@@ -186,7 +217,10 @@ namespace Sample
 
 			public override string ToString ()
 			{
-				return "Node(value=" + data + " parent=" + (parent != null ? parent.getData ().ToString() : "null") + " leftChild=" + (leftChild != null ? leftChild.getData ().ToString() : "null") + " rightChild=" + (rightChild != null ? rightChild.getData ().ToString() : "null") + ")";
+				return "Node(value=" + data + 
+					" parent=" + (parent != null ? parent.getData ().ToString() : "null") + 
+					" leftChild=" + (leftChild != null ? leftChild.getData ().ToString() : "null") + 
+					" rightChild=" + (rightChild != null ? rightChild.getData ().ToString() : "null") + ")";
 			}
 		}
 	}
